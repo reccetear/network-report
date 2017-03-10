@@ -1,0 +1,52 @@
+#include<stdio.h>
+#include<unistd.h>
+#include<sys/socket.h>
+#include<sys/types.h>
+#include<linux/if_ether.h>
+#include<linux/in.h>
+
+#define BUFFER_MAX 2048
+
+struct Ethernet {
+	unsigned char preamble[7];
+	unsigned char SFD;		//Start Frame Delimiter
+	unsigned char DA[6];		//Destination Address
+	unsigned char SA[6];		//Source Address
+	unsigned short type_length;		//Type/Length
+	char buffer[BUFFER_MAX];		//MAC Client Data
+	unsigned int FCS;		//Frame Check Sequence
+};
+
+
+struct IP {
+	unsigned char IHL : 4;			//Internet Head Length
+	unsigned char version : 4;		//IP Version
+	unsigned char ECN : 2;
+	unsigned char DS : 6;			//Determine Service
+	unsigned short length;		//Length of datagram
+	unsigned short label;
+	unsigned short offset : 13;
+	unsigned char tag : 3;
+	unsigned char live;
+	unsigned char proto;
+	unsigned short check_sum;
+	unsigned char SA[4];		//Source Address
+	unsigned char DA[4];		//Destination Address
+};
+
+struct ARP {
+	unsigned short Htype;		//Hardware Type
+	unsigned short Ptype;		//Protocal Type
+	unsigned char Mac_Length;
+	unsigned char IP_Length;
+	unsigned short OP;		//Operation Code
+	unsigned char sender_Mac[6];
+	unsigned char sender_IP[4];
+	unsigned char recver_Mac[6];
+	unsigned char recver_IP[4];
+	char data[18];
+};
+
+void analyse_IP(char *IP_buffer);
+void analyse_ARP(char *ARP_buffer);
+void analyse_RARP(char *RARP_buffer);
